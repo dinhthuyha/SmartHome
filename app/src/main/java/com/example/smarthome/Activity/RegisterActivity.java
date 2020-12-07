@@ -1,4 +1,4 @@
-package com.example.smarthome;
+package com.example.smarthome.Activity;
 
 import android.content.Intent;
 import android.os.Build;
@@ -12,7 +12,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smarthome.R;
+import com.example.smarthome.Utils.FirebaseUtils;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
@@ -43,13 +46,16 @@ public class RegisterActivity extends AppCompatActivity {
     TextView alreadyAccount;
     @BindView(R.id.back_login)
     ImageView backLogin;
-
+    private FirebaseAuth mAuth;
+    FirebaseUtils utils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
         changeStatusBarColor();
+        mAuth = FirebaseAuth.getInstance();
+        utils = new FirebaseUtils();
     }
 
     private void changeStatusBarColor() {
@@ -65,6 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.cirRegisterButton:
+                utils.signUp(this,mAuth,editTextEmail.getText().toString(),editTextPassword.getText().toString());
                 break;
             case R.id.already_account:
                 startActivity(new Intent(this, MainActivity.class));

@@ -1,16 +1,26 @@
-package com.example.smarthome;
+package com.example.smarthome.Activity;
 
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smarthome.R;
+import com.example.smarthome.Utils.FirebaseUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
@@ -35,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
     TextView newUser;
     @BindView(R.id.add)
     ImageView add;
+    private FirebaseAuth mAuth;
+    private static final String TAG = "MainActivity";
+    FirebaseUtils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,21 +58,19 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        mAuth = FirebaseAuth.getInstance();
+        utils = new FirebaseUtils();
     }
 
-
-    public void onLoginClick(View View) {
-
-
-
-    }
 
     @OnClick({R.id.got_password, R.id.cirLoginButton, R.id.new_user, R.id.add})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.got_password:
+                utils.forGotPassword(this, mAuth, editTextEmail.getText().toString());
                 break;
             case R.id.cirLoginButton:
+                utils.signIn(this, mAuth, editTextEmail.getText().toString(), editTextPassword.getText().toString());
                 break;
             case R.id.new_user:
                 startActivity(new Intent(this, RegisterActivity.class));
