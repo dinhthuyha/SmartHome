@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.got_password:
                 break;
             case R.id.cirLoginButton:
+                startActivity(new Intent(this, HomeActivity.class));
                 break;
             case R.id.new_user:
                 startActivity(new Intent(this, RegisterActivity.class));
