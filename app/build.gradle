@@ -34,6 +34,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     //noinspection GradleCompatible
     implementation 'com.android.support:design:22.2.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -41,5 +42,10 @@ dependencies {
     implementation 'com.jakewharton:butterknife:10.2.3'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
     implementation 'br.com.simplepass:loading-button-android:1.14.0'
+    implementation 'jp.wasabeef:recyclerview-animators:2.3.0'
+    implementation 'jp.wasabeef:picasso-transformations:2.2.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
 }

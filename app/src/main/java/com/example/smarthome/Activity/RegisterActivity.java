@@ -74,10 +74,10 @@ public class RegisterActivity extends AppCompatActivity {
                 utils.signUp(this,mAuth,editTextEmail.getText().toString(),editTextPassword.getText().toString());
                 break;
             case R.id.already_account:
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(this, LoginActivity.class));
                 break;
             case R.id.back_login:
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(this, LoginActivity.class));
                 break;
         }
         overridePendingTransition(R.anim.slide_in_left, android.R.anim.slide_out_right);
