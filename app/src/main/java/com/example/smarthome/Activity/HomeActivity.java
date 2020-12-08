@@ -15,6 +15,9 @@ import com.example.smarthome.Fragment.ZoomFragment;
 import com.example.smarthome.Model.HomeTypeModel;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.FragmentUtils;
+import com.example.smarthome.Utils.OnClickItem;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +62,15 @@ public class HomeActivity extends AppCompatActivity implements ItemClickListener
         rvMusicTypes.setAdapter(homeAdapter);
         rvMusicTypes.setLayoutManager(gridLayoutManager);
         rvMusicTypes.setItemAnimator(new ScaleInAnimator());
+
     }
 
     @Override
     public void onClick(View view, int position, boolean isLongClick) {
         Log.d(TAG, "onClick: "+position);
+        EventBus.getDefault().postSticky(new OnClickItem(homeTypeModelList.get(position), position));
         FragmentUtils.openFragment(getSupportFragmentManager(),R.id.ll_main, new ZoomFragment());
     }
+
+
 }

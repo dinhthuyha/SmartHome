@@ -64,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                 break;
             case R.id.cirLoginButton:
                 utils.signIn(this, mAuth, editTextEmail.getText().toString(), editTextPassword.getText().toString());
+                startActivity(new Intent(this,HomeActivity.class ));
                 break;
             case R.id.new_user:
                 startActivity(new Intent(this, RegisterActivity.class));

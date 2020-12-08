@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorAccent"
     android:layout_width="match_parent"
-android:background="#ffff"
     android:layout_height="match_parent">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -21,7 +22,7 @@ android:background="#ffff"
             app:toolbarId="@+id/toolbar">
 
             <ImageView
-                android:id="@+id/iv_type"
+                android:id="@+id/iv_music_type"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
@@ -38,7 +39,6 @@ android:background="#ffff"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                     <ImageView
-                        android:id="@+id/back"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_back"
@@ -52,7 +52,7 @@ android:background="#ffff"
                         android:padding="16sp"
                         android:textSize="16sp"
                         android:textColor="@color/colorAccent"
-                        android:id="@+id/tv_type"
+                        android:id="@+id/tv_music_type"
                         android:textAllCaps="true"/>
 
 
