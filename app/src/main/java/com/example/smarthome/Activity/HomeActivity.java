@@ -21,6 +21,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.animators.ScaleInAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 public class HomeActivity extends AppCompatActivity implements ItemClickListener {
@@ -49,13 +50,15 @@ public class HomeActivity extends AppCompatActivity implements ItemClickListener
                 return position % 3 == 0 ? 2 : 1;
             }
         });
-        homeTypeModelList.add(new HomeTypeModel(R.drawable.genre_x2_7, "living room"));
-        homeTypeModelList.add(new HomeTypeModel(R.drawable.genre_x2_7, "living room"));
-        homeTypeModelList.add(new HomeTypeModel(R.drawable.genre_x2_7, "living room"));
-        homeTypeModelList.add(new HomeTypeModel(R.drawable.genre_x2_7, "living room"));
+        homeTypeModelList.add(new HomeTypeModel(R.raw.living_room, "living room"));
+        homeTypeModelList.add(new HomeTypeModel(R.raw.bathroom, "Bath room"));
+        homeTypeModelList.add(new HomeTypeModel(R.raw.kitchen, "Kitchen room"));
+        homeTypeModelList.add(new HomeTypeModel(R.raw.bed_room, "Bed room"));
+        homeTypeModelList.add(new HomeTypeModel(R.raw.jym_room, "Jym room"));
+        homeTypeModelList.add(new HomeTypeModel(R.raw.studi_room, "Study room"));
         rvMusicTypes.setAdapter(homeAdapter);
         rvMusicTypes.setLayoutManager(gridLayoutManager);
-        rvMusicTypes.setItemAnimator(new SlideInLeftAnimator());
+        rvMusicTypes.setItemAnimator(new ScaleInAnimator());
     }
 
     @Override
