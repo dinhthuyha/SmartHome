@@ -72,7 +72,7 @@ public class RegisterActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.cirRegisterButton:
                 utils.signUp(this,mAuth,editTextEmail.getText().toString(),editTextPassword.getText().toString());
-                startActivity(new Intent(this,HomeActivity.class ));
+                startActivity(new Intent(this,MainActivity.class ));
                 break;
             case R.id.already_account:
                 startActivity(new Intent(this, LoginActivity.class));

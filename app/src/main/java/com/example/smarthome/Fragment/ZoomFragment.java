@@ -58,7 +58,8 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
     RecyclerView rv;
     @BindView(R.id.back)
     ImageView back;
-ZoomAdapter zoomAdapter;
+    ZoomAdapter zoomAdapter;
+
     public ZoomFragment() {
         // Required empty public constructor
     }
@@ -94,7 +95,7 @@ ZoomAdapter zoomAdapter;
             }
         });
         rv.setItemAnimator(new FadeInLeftAnimator());
-        zoomAdapter= new ZoomAdapter(typeModelListHome,this);
+        zoomAdapter = new ZoomAdapter(typeModelListHome, this);
         rv.setAdapter(zoomAdapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(
                 getContext(),
@@ -111,32 +112,34 @@ ZoomAdapter zoomAdapter;
         Log.d(TAG, "onClick: " + position);
     }
 
+
+
     @Subscribe(sticky = true)
     public void onReceivedTopSong(OnClickItem homeTypeModel) {
         HomeTypeModel model = homeTypeModel.homeTypeModel;
         Picasso.get().load(model.image).into(ivType);
         tvType.setText(model.nameRoom);
-        Log.d(TAG, "onReceivedTopSong: " + homeTypeModel.pos);
+        Log.d(TAG, "onReceivedTopSong: " + model.nameRoom);
     }
 
-    @OnClick({R.id.back, R.id.fab})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.back:
-                getActivity().onBackPressed();
-                break;
-            case R.id.fab:
-                openDialog();
-                break;
-        }
-    }
-
-    private void openDialog() {
-        final int check = 0;
-        Dialog dialog = new Dialog(getContext());
-        dialog.setTitle("Language to translate");
-        dialog.setContentView(R.layout.dialod_add);
-       // dialog.setCancelable(false);
-        dialog.show();
-    }
+//    @OnClick({R.id.back, R.id.fab})
+//    public void onViewClicked(View view) {
+//        switch (view.getId()) {
+//            case R.id.back:
+//                getActivity().onBackPressed();
+//                break;
+//            case R.id.fab:
+//                openDialog();
+//                break;
+//        }
+//    }
+//
+//    private void openDialog() {
+//        final int check = 0;
+//        Dialog dialog = new Dialog(getContext());
+//        dialog.setTitle("Language to translate");
+//        dialog.setContentView(R.layout.dialod_add);
+//        // dialog.setCancelable(false);
+//        dialog.show();
+//    }
 }
