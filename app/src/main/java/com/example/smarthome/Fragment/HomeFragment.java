@@ -57,6 +57,7 @@ public class HomeFragment extends Fragment implements ItemClickListener {
     RecyclerView rvMusicTypes;
     private static final String TAG = "HomeActivity";
     Context context;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -98,17 +99,36 @@ public class HomeFragment extends Fragment implements ItemClickListener {
         rvMusicTypes.setItemAnimator(new ScaleInAnimator());
 
 
-
         return view;
     }
 
     @Override
     public void onClick(View view, int position, boolean isLongClick) {
         Log.d(TAG, "onClick: " + position);
-        EventBus.getDefault().postSticky(new OnClickItem(homeTypeModelList.get(position), position));
+        dialogID();
+
         FragmentUtils.openFragment(getFragmentManager(), R.id.ll_home_fm, new ZoomFragment());
     }
 
+    public void dialogID() {
+        Dialog dialog = new Dialog(getContext());
+        dialog.setTitle("Language to translate");
+        dialog.setContentView(R.layout.identify_id);
+        dialog.setCancelable(false);
+        Button add = dialog.findViewById(R.id.buttonOk);
+        EditText txt = dialog.findViewById(R.id.room);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().postSticky(new OnClickItem(homeTypeModelList.get(position), position,txt.getText().toString() ));
+//                homeTypeModelList.add(new HomeTypeModel(R.raw.bathroom, txt.getText().toString()));
+//                homeAdapter.notifyDataSetChanged();
+//                Log.d(TAG, "onClick1: " + homeTypeModelList.size());
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+    }
 
     @OnClick({R.id.add})
     public void onViewClicked(View view) {
@@ -132,7 +152,7 @@ public class HomeFragment extends Fragment implements ItemClickListener {
             public void onClick(View v) {
                 homeTypeModelList.add(new HomeTypeModel(R.raw.bathroom, txt.getText().toString()));
                 homeAdapter.notifyDataSetChanged();
-                Log.d(TAG, "onClick1: "+ homeTypeModelList.size());
+                Log.d(TAG, "onClick1: " + homeTypeModelList.size());
                 dialog.cancel();
             }
         });

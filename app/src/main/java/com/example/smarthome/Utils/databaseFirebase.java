@@ -18,9 +18,9 @@ public class databaseFirebase {
 
     public static FirebaseDatabase firebaseDatabase;
 
-    public static void pushDataFirebase(FirebaseModel firebaseModel){
+    public static void pushDataFirebase(FirebaseModel firebaseModel,String id){
         firebaseDatabase= FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference= firebaseDatabase.getReference("");
+        DatabaseReference databaseReference= firebaseDatabase.getReference().child(id);
         databaseReference.child(firebaseModel.code).setValue(new FirebaseModel(
                 firebaseModel.code,
                 firebaseModel.cmd
