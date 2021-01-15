@@ -8,13 +8,17 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="#008577">
+        android:background="#833ABFB1">
 
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/ic_success" />
+        <TextView
+            android:text="Add Device"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="60px"
+            android:textColor="@color/black"
+            android:textAllCaps="true"
+            android:layout_centerInParent="true" />
 
     </RelativeLayout>
 

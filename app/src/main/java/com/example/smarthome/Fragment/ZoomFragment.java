@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,7 +42,7 @@ import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
 public class ZoomFragment extends Fragment implements ItemClickListener {
     Unbinder unbinder;
     private static final String TAG = "ZoomFragment";
-    List<HomeTypeModel> typeModelListHome = new ArrayList<>();
+     List<HomeTypeModel> typeModelListHome = new ArrayList<>();
     @BindView(R.id.iv_type)
     ImageView ivType;
     @BindView(R.id.tv_type)
@@ -67,10 +68,10 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        typeModelListHome.add(new HomeTypeModel(R.raw.quat, "fan"));
-        typeModelListHome.add(new HomeTypeModel(R.raw.tivi, "televition"));
-        typeModelListHome.add(new HomeTypeModel(R.raw.dieu_hoa, "air conditioning"));
-        typeModelListHome.add(new HomeTypeModel(R.raw.nl, "heater"));
+//        typeModelListHome.add(new HomeTypeModel(R.raw.quat, "fan"));
+//        typeModelListHome.add(new HomeTypeModel(R.raw.tivi, "televition"));
+//        typeModelListHome.add(new HomeTypeModel(R.raw.dieu_hoa, "air conditioning"));
+//        typeModelListHome.add(new HomeTypeModel(R.raw.nl, "heater"));
     }
 
     @Override
@@ -97,13 +98,13 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
         rv.setItemAnimator(new FadeInLeftAnimator());
         zoomAdapter = new ZoomAdapter(typeModelListHome, this);
         rv.setAdapter(zoomAdapter);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(
-                getContext(),
-                2,
-                LinearLayoutManager.VERTICAL,
-                false
-        );
-        rv.setLayoutManager(gridLayoutManager);
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(
+//                getContext(),
+//                2,
+//                LinearLayoutManager.VERTICAL,
+//                false
+//        );
+        rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         return view;
     }
 
@@ -122,24 +123,36 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
         Log.d(TAG, "onReceivedTopSong: " + model.nameRoom);
     }
 
-//    @OnClick({R.id.back, R.id.fab})
-//    public void onViewClicked(View view) {
-//        switch (view.getId()) {
-//            case R.id.back:
-//                getActivity().onBackPressed();
-//                break;
-//            case R.id.fab:
-//                openDialog();
-//                break;
-//        }
-//    }
-//
-//    private void openDialog() {
-//        final int check = 0;
-//        Dialog dialog = new Dialog(getContext());
-//        dialog.setTitle("Language to translate");
-//        dialog.setContentView(R.layout.dialod_add);
-//        // dialog.setCancelable(false);
-//        dialog.show();
-//    }
+    @OnClick({R.id.back, R.id.fab})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.back:
+                getActivity().onBackPressed();
+                break;
+            case R.id.fab:
+                openDialog();
+                break;
+        }
+    }
+
+    private void openDialog() {
+        final int check = 0;
+        Dialog dialog = new Dialog(getContext());
+        dialog.setTitle("Language to translate");
+        dialog.setContentView(R.layout.add_device);
+        EditText txt = dialog.findViewById(R.id.txt_result);
+        Button oke= dialog.findViewById(R.id.buttonOk);
+        dialog.setCancelable(false);
+        oke.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                typeModelListHome.add(new HomeTypeModel(R.raw.quat, txt.getText().toString()));
+                zoomAdapter.notifyDataSetChanged();
+                Log.d(TAG, "onClick1: "+ typeModelListHome.size());
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
+    }
 }

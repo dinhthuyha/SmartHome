@@ -107,7 +107,6 @@ public class HomeFragment extends Fragment implements ItemClickListener {
         Log.d(TAG, "onClick: " + position);
         EventBus.getDefault().postSticky(new OnClickItem(homeTypeModelList.get(position), position));
         FragmentUtils.openFragment(getFragmentManager(), R.id.ll_home_fm, new ZoomFragment());
-
     }
 
 
