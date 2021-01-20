@@ -10,4 +10,20 @@ public class HomeTypeModel implements Serializable {
         this.image = image;
         this.nameRoom = nameRoom;
     }
+
+    public int getImage() {
+        return image;
+    }
+
+    public void setImage(int image) {
+        this.image = image;
+    }
+
+    public String getNameRoom() {
+        return nameRoom;
+    }
+
+    public void setNameRoom(String nameRoom) {
+        this.nameRoom = nameRoom;
+    }
 }

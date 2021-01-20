@@ -28,6 +28,7 @@ import com.example.smarthome.Adapter.ItemClickListener;
 import com.example.smarthome.Adapter.ZoomAdapter;
 import com.example.smarthome.Model.HomeTypeModel;
 import com.example.smarthome.R;
+import com.example.smarthome.Utils.DatabaseFirebase;
 import com.example.smarthome.Utils.FragmentUtils;
 import com.example.smarthome.Utils.OnClickItem;
 import com.google.android.material.appbar.AppBarLayout;
@@ -51,8 +52,8 @@ import jp.wasabeef.recyclerview.animators.ScaleInAnimator;
 public class HomeFragment extends Fragment implements ItemClickListener {
     Unbinder unbinder;
     HomeAdapter homeAdapter;
-
-    List<HomeTypeModel> homeTypeModelList = new ArrayList<>();
+    String nameRoom;
+    List<HomeTypeModel> homeTypeModelList;
     @BindView(R.id.rv)
     RecyclerView rvMusicTypes;
     private static final String TAG = "HomeActivity";
@@ -65,20 +66,27 @@ public class HomeFragment extends Fragment implements ItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        homeTypeModelList.add(new HomeTypeModel(R.raw.living_room, "living room"));
-        homeTypeModelList.add(new HomeTypeModel(R.raw.bathroom, "Bath room"));
-        homeTypeModelList.add(new HomeTypeModel(R.raw.kitchen, "Kitchen room"));
-        homeTypeModelList.add(new HomeTypeModel(R.raw.bed_room, "Bed room"));
-        homeTypeModelList.add(new HomeTypeModel(R.raw.jym_room, "Jym room"));
-        homeTypeModelList.add(new HomeTypeModel(R.raw.studi_room, "Study room"));
+        DatabaseFirebase.getRoom("Room House");
+//        homeTypeModelList.add(new HomeTypeModel(R.raw.living_room, "living room"));
+//        homeTypeModelList.add(new HomeTypeModel(R.raw.bathroom, "Bath room"));
+//        homeTypeModelList.add(new HomeTypeModel(R.raw.kitchen, "Kitchen room"));
+//        homeTypeModelList.add(new HomeTypeModel(R.raw.bed_room, "Bed room"));
+//        homeTypeModelList.add(new HomeTypeModel(R.raw.jym_room, "Jym room"));
+//        homeTypeModelList.add(new HomeTypeModel(R.raw.studi_room, "Study room"));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         unbinder = ButterKnife.bind(this, view);
+        homeTypeModelList = new ArrayList<>();
+        EventBus.getDefault().register(this);
+
+
+
         homeAdapter = new HomeAdapter(homeTypeModelList, this, getContext());
         GridLayoutManager gridLayoutManager = new GridLayoutManager(
                 getContext(),
@@ -105,12 +113,11 @@ public class HomeFragment extends Fragment implements ItemClickListener {
     @Override
     public void onClick(View view, int position, boolean isLongClick) {
         Log.d(TAG, "onClick: " + position);
-        dialogID();
-
+        dialogID(position);
         FragmentUtils.openFragment(getFragmentManager(), R.id.ll_home_fm, new ZoomFragment());
     }
 
-    public void dialogID() {
+    public void dialogID(int position) {
         Dialog dialog = new Dialog(getContext());
         dialog.setTitle("Language to translate");
         dialog.setContentView(R.layout.identify_id);
@@ -120,10 +127,11 @@ public class HomeFragment extends Fragment implements ItemClickListener {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventBus.getDefault().postSticky(new OnClickItem(homeTypeModelList.get(position), position,txt.getText().toString() ));
+                EventBus.getDefault().postSticky(new OnClickItem(homeTypeModelList.get(position), position, txt.getText().toString()));
 //                homeTypeModelList.add(new HomeTypeModel(R.raw.bathroom, txt.getText().toString()));
 //                homeAdapter.notifyDataSetChanged();
 //                Log.d(TAG, "onClick1: " + homeTypeModelList.size());
+
                 dialog.cancel();
             }
         });
@@ -150,14 +158,27 @@ public class HomeFragment extends Fragment implements ItemClickListener {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                homeTypeModelList.add(new HomeTypeModel(R.raw.bathroom, txt.getText().toString()));
-                homeAdapter.notifyDataSetChanged();
+
                 Log.d(TAG, "onClick1: " + homeTypeModelList.size());
+                nameRoom = txt.getText().toString();
+                DatabaseFirebase.PushRoom(nameRoom);
                 dialog.cancel();
             }
         });
         dialog.show();
     }
 
+
+    @Subscribe(sticky = true)
+    public void onReceivedTopSong(List<HomeTypeModel> list) {
+        if( homeTypeModelList.size()>0){
+            homeTypeModelList.clear();
+        }
+        Log.d(TAG, "onReceivedTopSong: " +list.size());
+        homeTypeModelList.addAll(list);
+        Log.d(TAG, "onReceivedTopSong1: "+homeTypeModelList.size());
+//        homeTypeModelList.add(new HomeTypeModel(R.raw.bathroom, "a"));
+        homeAdapter.notifyDataSetChanged();
+    }
 
 }

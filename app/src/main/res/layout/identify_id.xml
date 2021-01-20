@@ -11,6 +11,7 @@
         android:background="#008577">
 
         <TextView
+
             android:gravity="center"
             android:textSize="60px"
             android:textColor="@color/black"
@@ -29,6 +30,7 @@
 
 
         <EditText
+            android:inputType="textPassword"
             android:id="@+id/room"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

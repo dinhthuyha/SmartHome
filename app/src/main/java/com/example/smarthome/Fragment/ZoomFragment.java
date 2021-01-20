@@ -19,12 +19,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smarthome.Adapter.ItemClickListener;
 import com.example.smarthome.Adapter.ZoomAdapter;
+import com.example.smarthome.Model.DeviceModel;
+import com.example.smarthome.Model.FirebaseModel;
 import com.example.smarthome.Model.HomeTypeModel;
 import com.example.smarthome.R;
+import com.example.smarthome.Utils.DatabaseFirebase;
 import com.example.smarthome.Utils.OnClickItem;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -38,11 +43,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
+import com.example.smarthome.Utils.FragmentUtils;
 
 public class ZoomFragment extends Fragment implements ItemClickListener {
     Unbinder unbinder;
+    FirebaseModel firebaseModel;
+    String id;
+    String nameDevice;
     private static final String TAG = "ZoomFragment";
-     List<HomeTypeModel> typeModelListHome = new ArrayList<>();
+    List<HomeTypeModel> typeModelListHome = new ArrayList<>();
     @BindView(R.id.iv_type)
     ImageView ivType;
     @BindView(R.id.tv_type)
@@ -68,10 +77,10 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        typeModelListHome.add(new HomeTypeModel(R.raw.quat, "fan"));
-//        typeModelListHome.add(new HomeTypeModel(R.raw.tivi, "televition"));
-//        typeModelListHome.add(new HomeTypeModel(R.raw.dieu_hoa, "air conditioning"));
-//        typeModelListHome.add(new HomeTypeModel(R.raw.nl, "heater"));
+        typeModelListHome.add(new HomeTypeModel(R.raw.quat, "fan"));
+        typeModelListHome.add(new HomeTypeModel(R.raw.tivi, "televition"));
+        typeModelListHome.add(new HomeTypeModel(R.raw.dieu_hoa, "air conditioning"));
+        typeModelListHome.add(new HomeTypeModel(R.raw.nl, "heater"));
     }
 
     @Override
@@ -98,21 +107,15 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
         rv.setItemAnimator(new FadeInLeftAnimator());
         zoomAdapter = new ZoomAdapter(typeModelListHome, this);
         rv.setAdapter(zoomAdapter);
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(
-//                getContext(),
-//                2,
-//                LinearLayoutManager.VERTICAL,
-//                false
-//        );
         rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         return view;
     }
 
     @Override
     public void onClick(View view, int position, boolean isLongClick) {
-        Log.d(TAG, "onClick: " + position);
+        Log.d(TAG, "onClick:device name "+ nameDevice);
+        FragmentUtils.openFragment(getFragmentManager(), R.id.ll_home_fm, new DeviceFragment());
     }
-
 
 
     @Subscribe(sticky = true)
@@ -141,15 +144,26 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
         dialog.setTitle("Language to translate");
         dialog.setContentView(R.layout.add_device);
         EditText txt = dialog.findViewById(R.id.txt_result);
-        Button oke= dialog.findViewById(R.id.buttonOk);
+
+
+        Button oke = dialog.findViewById(R.id.buttonOk);
         dialog.setCancelable(false);
         oke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 typeModelListHome.add(new HomeTypeModel(R.raw.quat, txt.getText().toString()));
                 zoomAdapter.notifyDataSetChanged();
-                Log.d(TAG, "onClick1: "+ typeModelListHome.size());
+
+                //lay dl tu broker ve up len firebase
+//                firebaseModel = new FirebaseModel("0123456", "p");
+//                DatabaseFirebase.pushDataFirebase(firebaseModel, id, txt.getText().toString());
+
+                nameDevice = txt.getText().toString();
+
+                EventBus.getDefault().postSticky(new DeviceModel(nameDevice, id));
+
                 dialog.cancel();
+
             }
         });
 

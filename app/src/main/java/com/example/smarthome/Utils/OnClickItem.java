@@ -13,6 +13,30 @@ public class OnClickItem {
         this.id=id;
     }
 
+    public HomeTypeModel getHomeTypeModel() {
+        return homeTypeModel;
+    }
+
+    public void setHomeTypeModel(HomeTypeModel homeTypeModel) {
+        this.homeTypeModel = homeTypeModel;
+    }
+
+    public int getPos() {
+        return pos;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public OnClickItem(HomeTypeModel homeTypeModel) {
     }
 }
