@@ -64,17 +64,9 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
     private String mParam2;
 
     public DeviceFragment() {
-        // Required empty public constructor
+
     }
 
-//    public static DeviceFragment newInstance(String param1, String param2) {
-//        DeviceFragment fragment = new DeviceFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,7 +104,7 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.add:
-openDialog();
+                openDialog();
                 break;
 
         }
@@ -134,7 +126,7 @@ openDialog();
             public void onClick(View v) {
                 deviceList.add(new HomeTypeModel(R.raw.quat, txt.getText().toString()));
                 deviceAdapter.notifyDataSetChanged();
-
+                Log.d(TAG, "onClick: "+txt.getText());
                 //lay dl tu broker ve up len firebase
                 firebaseModel = new FirebaseModel("0123456", "p");
                 DatabaseFirebase.pushDataFirebase(firebaseModel, id, nameDevice, txt.getText().toString());

@@ -77,10 +77,7 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        typeModelListHome.add(new HomeTypeModel(R.raw.quat, "fan"));
-        typeModelListHome.add(new HomeTypeModel(R.raw.tivi, "televition"));
-        typeModelListHome.add(new HomeTypeModel(R.raw.dieu_hoa, "air conditioning"));
-        typeModelListHome.add(new HomeTypeModel(R.raw.nl, "heater"));
+
     }
 
     @Override
@@ -119,11 +116,13 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
 
 
     @Subscribe(sticky = true)
-    public void onReceivedTopSong(OnClickItem homeTypeModel) {
+    public void onReceivedData(OnClickItem homeTypeModel) {
         HomeTypeModel model = homeTypeModel.homeTypeModel;
         Picasso.get().load(model.image).into(ivType);
         tvType.setText(model.nameRoom);
+        id= homeTypeModel.id;
         Log.d(TAG, "onReceivedTopSong: " + model.nameRoom);
+        Log.d(TAG, "onReceivedID"+ homeTypeModel.id);
     }
 
     @OnClick({R.id.back, R.id.fab})
@@ -154,9 +153,9 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
                 typeModelListHome.add(new HomeTypeModel(R.raw.quat, txt.getText().toString()));
                 zoomAdapter.notifyDataSetChanged();
 
-                //lay dl tu broker ve up len firebase
-//                firebaseModel = new FirebaseModel("0123456", "p");
-//                DatabaseFirebase.pushDataFirebase(firebaseModel, id, txt.getText().toString());
+                Log.d(TAG, "Id:"+id);
+                firebaseModel = new FirebaseModel("0123456", "p");
+                DatabaseFirebase.pushDataFirebase(firebaseModel, id, txt.getText().toString(),"a");
 
                 nameDevice = txt.getText().toString();
 

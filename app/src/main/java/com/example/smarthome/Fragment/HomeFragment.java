@@ -170,7 +170,7 @@ public class HomeFragment extends Fragment implements ItemClickListener {
 
 
     @Subscribe(sticky = true)
-    public void onReceivedTopSong(List<HomeTypeModel> list) {
+    public void onReceivedData(List<HomeTypeModel> list) {
         if( homeTypeModelList.size()>0){
             homeTypeModelList.clear();
         }
