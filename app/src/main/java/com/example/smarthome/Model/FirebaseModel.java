@@ -4,6 +4,9 @@ public class FirebaseModel {
     public String code;
     public String cmd;
 
+    public FirebaseModel() {
+
+    }
 
     public FirebaseModel(String code, String cmd) {
         this.code = code;

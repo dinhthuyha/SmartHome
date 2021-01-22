@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,15 +22,21 @@ import com.example.smarthome.Adapter.ItemClickListener;
 import com.example.smarthome.Adapter.ZoomAdapter;
 import com.example.smarthome.Model.DeviceModel;
 import com.example.smarthome.Model.FirebaseModel;
+import com.example.smarthome.Model.FutureAndCodeModel;
 import com.example.smarthome.Model.HomeTypeModel;
+import com.example.smarthome.Model.Model;
+import com.example.smarthome.Model.ReadDeviceModel;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.DatabaseFirebase;
 import com.example.smarthome.Utils.OnClickItem;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,6 +50,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
+
 import com.example.smarthome.Utils.FragmentUtils;
 
 public class ZoomFragment extends Fragment implements ItemClickListener {
@@ -50,8 +58,10 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
     FirebaseModel firebaseModel;
     String id;
     String nameDevice;
+
+    public static FirebaseDatabase firebaseDatabase;
     private static final String TAG = "ZoomFragment";
-    List<HomeTypeModel> typeModelListHome = new ArrayList<>();
+    List<HomeTypeModel> typeModelListHome;
     @BindView(R.id.iv_type)
     ImageView ivType;
     @BindView(R.id.tv_type)
@@ -87,6 +97,8 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
         View view = inflater.inflate(R.layout.fragment_zoom, container, false);
         unbinder = ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
+        typeModelListHome = new ArrayList<>();
+
         //ham lay vi tri cua text trong
         appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -110,19 +122,68 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
 
     @Override
     public void onClick(View view, int position, boolean isLongClick) {
-        Log.d(TAG, "onClick:device name "+ nameDevice);
-        FragmentUtils.openFragment(getFragmentManager(), R.id.ll_home_fm, new DeviceFragment());
+        Log.d(TAG, "onClick:device name " + nameDevice);
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d(TAG, "onLongClick: "+position);
+                return false;
+            }
+        });
+//        FragmentUtils.openFragment(getFragmentManager(), R.id.ll_home_fm, new DeviceFragment());
+
     }
 
 
     @Subscribe(sticky = true)
     public void onReceivedData(OnClickItem homeTypeModel) {
+
+        List<Model> list = new ArrayList<>();
         HomeTypeModel model = homeTypeModel.homeTypeModel;
         Picasso.get().load(model.image).into(ivType);
         tvType.setText(model.nameRoom);
-        id= homeTypeModel.id;
+        id = homeTypeModel.id;
         Log.d(TAG, "onReceivedTopSong: " + model.nameRoom);
-        Log.d(TAG, "onReceivedID"+ homeTypeModel.id);
+        Log.d(TAG, "onReceivedID" + homeTypeModel.id);
+        getRoom(list, id);
+
+    }
+
+    public void getRoom(final List<Model> list, String id) {
+        if( typeModelListHome.size()>0){
+            typeModelListHome.clear();
+        }
+        List<ReadDeviceModel> futureAndCodeModelList = new ArrayList<>();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference reference = firebaseDatabase.getReference(id);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d(TAG, "child:"+snapshot.getKey());
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Log.d(TAG, "child1:"+data.getKey());
+
+                    typeModelListHome.add(new HomeTypeModel(R.raw.quat, data.getKey()));
+
+                    for (DataSnapshot model : data.getChildren()) {
+                        Log.d(TAG, "child2:"+model.getKey());
+                        FirebaseModel firebaseModel= model.getValue(FirebaseModel.class);
+                        Log.d(TAG, "code:"+ firebaseModel.code);
+                        Log.d(TAG, "cmd: "+firebaseModel.cmd);
+
+                    }
+                }
+
+                Log.d(TAG, "list device size:" + typeModelListHome.size());
+                zoomAdapter.notifyDataSetChanged();
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     @OnClick({R.id.back, R.id.fab})
@@ -153,9 +214,9 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
                 typeModelListHome.add(new HomeTypeModel(R.raw.quat, txt.getText().toString()));
                 zoomAdapter.notifyDataSetChanged();
 
-                Log.d(TAG, "Id:"+id);
+                Log.d(TAG, "Id:" + id);
                 firebaseModel = new FirebaseModel("0123456", "p");
-                DatabaseFirebase.pushDataFirebase(firebaseModel, id, txt.getText().toString(),"a");
+                DatabaseFirebase.pushDataFirebase(firebaseModel, id, txt.getText().toString(), "a");
 
                 nameDevice = txt.getText().toString();
 

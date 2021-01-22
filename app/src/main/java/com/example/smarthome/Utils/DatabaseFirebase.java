@@ -26,9 +26,9 @@ public class DatabaseFirebase {
 
     public static void pushDataFirebase(FirebaseModel firebaseModel, String id, String name, String feature) {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference().child(id);
-        databaseReference.child(name).child(feature).setValue(new FirebaseModel(
-                firebaseModel.code,
+        DatabaseReference databaseReference = firebaseDatabase.getReference();
+        databaseReference.child(id).child(name).child(feature).setValue(new FirebaseModel(
+               firebaseModel.code,
                 firebaseModel.cmd
         ));
     }
@@ -69,7 +69,7 @@ public class DatabaseFirebase {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<HomeTypeModel> list = new ArrayList<>();
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    Log.d(TAG, "onDataChange: "+ data.getKey()h);
+                    Log.d(TAG, "onDataChange: "+ data.getKey());
                     String name = data.getValue(String.class);
                     list.add(new HomeTypeModel(R.raw.bathroom, name));
                     Log.d(TAG, "onDataChange: " + list.size());

@@ -97,6 +97,13 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
 
     @Override
     public void onClick(View view, int position, boolean isLongClick) {
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d(TAG, "onLongClick: "+position);
+                return false;
+            }
+        });
 
     }
 
