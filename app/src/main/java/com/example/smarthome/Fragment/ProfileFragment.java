@@ -79,8 +79,6 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.txt_email)
     TextView email;
 
-    @BindView(R.id.txt_location)
-    TextView location;
 
     @BindView(R.id.log_out)
     Button logOut;
