@@ -17,34 +17,14 @@
         android:id="@+id/add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="6dp"
         app:fabSize="normal"
         app:layout_anchorGravity="bottom|end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_24" />
 
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rv">
-
-        <ImageView
-            android:id="@+id/imgage_profile"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:background="#D3CBCB"
-            android:outlineAmbientShadowColor="@color/black"
-            android:scaleType="centerCrop"
-            android:src="@drawable/add"
-            tools:layout_editor_absoluteX="23dp"
-            tools:layout_editor_absoluteY="208dp" />
-    </androidx.cardview.widget.CardView>
 
 
 

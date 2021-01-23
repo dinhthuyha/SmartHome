@@ -173,6 +173,7 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
     public void pushDataFirebase(FirebaseModel firebaseModel, String id, String name, String feature) {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child(id).child(name);
+        databaseReference.child("a").removeValue();
         databaseReference.child(feature).setValue(firebaseModel.code);
     }
 
