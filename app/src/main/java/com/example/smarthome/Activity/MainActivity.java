@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout.getTabAt(0).getIcon().setAlpha(255);
         tabLayout.getTabAt(1).getIcon().setAlpha(100);
-        tabLayout.getTabAt(2).getIcon().setAlpha(100);
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
