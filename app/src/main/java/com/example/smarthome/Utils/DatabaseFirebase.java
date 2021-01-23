@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.example.smarthome.Model.FirebaseModel;
 import com.example.smarthome.Model.HomeTypeModel;
+import com.example.smarthome.Model.DataAccount;
 import com.example.smarthome.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,7 +32,6 @@ public class DatabaseFirebase {
     }
 
 
-
     public static List<FirebaseModel> Read(String name) {
         List<FirebaseModel> list = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -53,11 +53,6 @@ public class DatabaseFirebase {
         return list;
     }
 
-    public static void PushRoom(String nameRoom) {
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference().child("Room House");
-        databaseReference.push().setValue(nameRoom);
-    }
 
     public static void getRoom(String name) {
 
@@ -68,7 +63,7 @@ public class DatabaseFirebase {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<HomeTypeModel> list = new ArrayList<>();
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    Log.d(TAG, "onDataChange: "+ data.getKey());
+                    Log.d(TAG, "onDataChange: " + data.getKey());
                     String name = data.getValue(String.class);
                     list.add(new HomeTypeModel(R.raw.bathroom, name));
                     Log.d(TAG, "onDataChange: " + list.size());
@@ -82,7 +77,19 @@ public class DatabaseFirebase {
 
             }
         });
+    }
 
 
+
+    public static void PushRoom(String nameRoom) {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference().child("Room House");
+        databaseReference.push().setValue(nameRoom);
+    }
+
+    public static void pushAccountFirebase(DataAccount dataAccount) {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference().child("account");
+        databaseReference.push().setValue(new DataAccount(dataAccount.getEmail(), dataAccount.getPhone(),dataAccount.getName()));
     }
 }

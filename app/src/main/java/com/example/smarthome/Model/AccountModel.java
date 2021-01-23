@@ -9,4 +9,12 @@ public class AccountModel {
         this.mail = mail;
         this.pass = pass;
     }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public String getPass() {
+        return pass;
+    }
 }

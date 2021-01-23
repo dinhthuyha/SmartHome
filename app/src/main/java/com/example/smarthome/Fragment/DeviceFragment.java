@@ -161,8 +161,6 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
                 } else {
                     Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
                 }
-
-
                 dialog.cancel();
 
             }
