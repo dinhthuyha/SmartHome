@@ -33,6 +33,8 @@ public class DatabaseFirebase {
         ));
     }
 
+
+
     public static List<FirebaseModel> Read(String name) {
         List<FirebaseModel> list = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance();

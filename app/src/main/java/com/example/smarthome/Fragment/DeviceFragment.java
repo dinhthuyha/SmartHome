@@ -1,8 +1,10 @@
 package com.example.smarthome.Fragment;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,21 +15,40 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.smarthome.Adapter.DeviceAdapter;
 import com.example.smarthome.Adapter.ItemClickListener;
 import com.example.smarthome.Model.DeviceModel;
 import com.example.smarthome.Model.FirebaseModel;
 import com.example.smarthome.Model.HomeTypeModel;
+import com.example.smarthome.Model.ReadDeviceModel;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.DatabaseFirebase;
+import com.example.smarthome.Utils.FragmentUtils;
+import com.example.smarthome.Utils.MQTT;
 import com.example.smarthome.Utils.OnClickItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,28 +58,26 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link DeviceFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DeviceFragment extends Fragment implements ItemClickListener {
     Unbinder unbinder;
     String id;
+    FirebaseDatabase firebaseDatabase;
     FirebaseModel firebaseModel;
     String nameDevice;
     @BindView(R.id.add)
     FloatingActionButton add;
     @BindView(R.id.rv)
     RecyclerView recyclerView;
-    List<HomeTypeModel> deviceList;
+    List<HomeTypeModel> FutureList;
+    List<String> codeDeviceList;
     DeviceAdapter deviceAdapter;
     private static final String TAG = "DeviceFragment";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    String code;
+    String cmd;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -84,10 +103,10 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_divice, container, false);
         unbinder = ButterKnife.bind(this, view);
+        codeDeviceList = new ArrayList<>();
+        FutureList = new ArrayList<>();
 
-        deviceList = new ArrayList<>();
-
-        deviceAdapter = new DeviceAdapter(deviceList, this);
+        deviceAdapter = new DeviceAdapter(FutureList, this);
         recyclerView.setItemAnimator(new FadeInLeftAnimator());
         recyclerView.setAdapter(deviceAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -97,14 +116,13 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
 
     @Override
     public void onClick(View view, int position, boolean isLongClick) {
-        view.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Log.d(TAG, "onLongClick: "+position);
-                return false;
-            }
-        });
+        Log.d(TAG, "onClick: " + FutureList.get(position).nameRoom);
+        Log.d(TAG, "code future:" + codeDeviceList.get(position).toString());
+        String a="{\"cmd\":\""+id +"\", \"code\":\""+codeDeviceList.get(position).toString()+"\"}";
+        String payload = "{\"code\":\"" + codeDeviceList.get(position).toString() + "\"}";
+        // dang ki MQTT broker
 
+        MQTT.callback(getContext(), payload);
     }
 
     @OnClick({R.id.add})
@@ -112,11 +130,10 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
         switch (view.getId()) {
             case R.id.add:
                 openDialog();
+                MQTT.callback(getContext(), " ");
                 break;
-
         }
     }
-
 
     private void openDialog() {
         final int check = 0;
@@ -124,42 +141,93 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
         dialog.setTitle("Language to translate");
         dialog.setContentView(R.layout.add_device);
         EditText txt = dialog.findViewById(R.id.txt_result);
-
-
         Button oke = dialog.findViewById(R.id.buttonOk);
         dialog.setCancelable(false);
         oke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deviceList.add(new HomeTypeModel(R.raw.quat, txt.getText().toString()));
-                deviceAdapter.notifyDataSetChanged();
-                Log.d(TAG, "onClick: "+txt.getText());
+                //subscribe mot topic de nhan code ve
                 //lay dl tu broker ve up len firebase
-                firebaseModel = new FirebaseModel("0123456", "p");
-                DatabaseFirebase.pushDataFirebase(firebaseModel, id, nameDevice, txt.getText().toString());
+                if (cmd.equals(id)) {
+                    firebaseModel = new FirebaseModel(code, cmd);
 
-                nameDevice = txt.getText().toString();
+                    Log.d(TAG, "name:" + nameDevice);
+                    //ssubcribe
 
-//                EventBus.getDefault().postSticky(new DeviceModel(nameDevice, id));
+                    pushDataFirebase(firebaseModel, id, nameDevice, txt.getText().toString());
+                    Log.d(TAG, "push len firebae " + firebaseModel.cmd + firebaseModel.code);
+                }
 
+                Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
                 dialog.cancel();
 
             }
         });
-
         dialog.show();
     }
 
-    @Subscribe(sticky = true)
-    public void onReceivedTopSong(DeviceModel deviceModel) {
-//        HomeTypeModel model = home.getHomeTypeModel();
-//        Picasso.get().load(model.image).into(ivType);
-//        tvType.setText(model.nameRoom);
-//        id = home.getId().toString();
-        nameDevice = deviceModel.getNameDevice();
-        id = deviceModel.getId();
-        Log.d(TAG, "onReceivedTopSong: " + deviceModel.getId());
-        Log.d(TAG, "onReceivedTopSong: " + deviceModel.getNameDevice());
-
+    public void pushDataFirebase(FirebaseModel firebaseModel, String id, String name, String feature) {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference().child(id).child(name);
+        databaseReference.child(feature).setValue(new FirebaseModel(
+                firebaseModel.code,
+                firebaseModel.cmd
+        ));
     }
+
+    @Subscribe(sticky = true)
+    public void onReceivedTopSong(OnClickItem onClickItem) {
+        Log.d(TAG, "id:" + onClickItem.id);
+        Log.d(TAG, "name Device:" + onClickItem.homeTypeModel.nameRoom);
+        getRoom(onClickItem.id, onClickItem.homeTypeModel.nameRoom);
+        id = onClickItem.id;
+        nameDevice = onClickItem.homeTypeModel.nameRoom;
+    }
+
+    @Subscribe(sticky = true)
+    public void onReceived(FirebaseModel fire) {
+        firebaseModel = new FirebaseModel(fire.code.toString(), fire.cmd.toLowerCase());
+        code = fire.code.toString();
+        cmd = fire.cmd.toString();
+        Log.d(TAG, "received:" + fire.code + "\t" + fire.cmd);
+    }
+
+    public void getRoom(String id, String nameDevice) {
+        List<HomeTypeModel> list = new ArrayList<>();
+        List<String> listCode = new ArrayList<>();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference reference = firebaseDatabase.getReference(id);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    if (data.getKey().equals(nameDevice)) {
+                        for (DataSnapshot model : data.getChildren()) {
+                            FirebaseModel firebaseModel = model.getValue(FirebaseModel.class);
+                            Log.d(TAG, "model:" + firebaseModel.cmd);
+                            listCode.add(firebaseModel.code);
+                            list.add(new HomeTypeModel(R.raw.quat, model.getKey()));
+                        }
+                        break;
+                    }
+                }
+                Log.d(TAG, "add lan so :" + list.size());
+                FutureList.clear();
+                codeDeviceList.clear();
+
+                FutureList.addAll(list);
+                codeDeviceList.addAll(listCode);
+
+                list.clear();
+                listCode.clear();
+
+                deviceAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
 }

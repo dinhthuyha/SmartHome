@@ -103,7 +103,7 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
         appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-                Log.d(TAG, "onOffsetChanged: " + i);
+
                 if (i == 0) {
 
                     toolbar.setBackground(getResources().getDrawable(
@@ -122,15 +122,17 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
 
     @Override
     public void onClick(View view, int position, boolean isLongClick) {
-        Log.d(TAG, "onClick:device name " + nameDevice);
+
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Log.d(TAG, "onLongClick: "+position);
+
                 return false;
             }
         });
-//        FragmentUtils.openFragment(getFragmentManager(), R.id.ll_home_fm, new DeviceFragment());
+        FragmentUtils.openFragment(getFragmentManager(), R.id.ll_home_fm, new DeviceFragment());
+        Log.d(TAG, "send device :  "+id + typeModelListHome.get(position).nameRoom);
+        EventBus.getDefault().postSticky(new OnClickItem(typeModelListHome.get(position), position, id));
 
     }
 
@@ -138,43 +140,44 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
     @Subscribe(sticky = true)
     public void onReceivedData(OnClickItem homeTypeModel) {
 
-        List<Model> list = new ArrayList<>();
+        List<HomeTypeModel> list = new ArrayList<>();
         HomeTypeModel model = homeTypeModel.homeTypeModel;
         Picasso.get().load(model.image).into(ivType);
         tvType.setText(model.nameRoom);
         id = homeTypeModel.id;
-        Log.d(TAG, "onReceivedTopSong: " + model.nameRoom);
-        Log.d(TAG, "onReceivedID" + homeTypeModel.id);
-        getRoom(list, id);
+//        Log.d(TAG, "onReceivedTopSong: " + model.nameRoom);
+//        Log.d(TAG, "onReceivedID" + homeTypeModel.id);
+        getRoom(id);
 
     }
 
-    public void getRoom(final List<Model> list, String id) {
-        if( typeModelListHome.size()>0){
-            typeModelListHome.clear();
-        }
+    public void getRoom(String id) {
+        List<HomeTypeModel> list = new ArrayList<>();
         List<ReadDeviceModel> futureAndCodeModelList = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference reference = firebaseDatabase.getReference(id);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d(TAG, "child:"+snapshot.getKey());
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    Log.d(TAG, "child1:"+data.getKey());
 
-                    typeModelListHome.add(new HomeTypeModel(R.raw.quat, data.getKey()));
+                for (DataSnapshot data : snapshot.getChildren()) {
+
+
+                    list.add(new HomeTypeModel(R.raw.quat, data.getKey()));
+
 
                     for (DataSnapshot model : data.getChildren()) {
-                        Log.d(TAG, "child2:"+model.getKey());
-                        FirebaseModel firebaseModel= model.getValue(FirebaseModel.class);
-                        Log.d(TAG, "code:"+ firebaseModel.code);
-                        Log.d(TAG, "cmd: "+firebaseModel.cmd);
+
+                        FirebaseModel firebaseModel = model.getValue(FirebaseModel.class);
+
+
 
                     }
                 }
-
-                Log.d(TAG, "list device size:" + typeModelListHome.size());
+                Log.d(TAG, "add lan so :" + list.size());
+                typeModelListHome.clear();
+                typeModelListHome.addAll(list);
+                list.clear();
                 zoomAdapter.notifyDataSetChanged();
 
 
@@ -204,24 +207,16 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
         dialog.setTitle("Language to translate");
         dialog.setContentView(R.layout.add_device);
         EditText txt = dialog.findViewById(R.id.txt_result);
-
-
         Button oke = dialog.findViewById(R.id.buttonOk);
         dialog.setCancelable(false);
         oke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                typeModelListHome.add(new HomeTypeModel(R.raw.quat, txt.getText().toString()));
-                zoomAdapter.notifyDataSetChanged();
-
-                Log.d(TAG, "Id:" + id);
                 firebaseModel = new FirebaseModel("0123456", "p");
                 DatabaseFirebase.pushDataFirebase(firebaseModel, id, txt.getText().toString(), "a");
 
                 nameDevice = txt.getText().toString();
-
                 EventBus.getDefault().postSticky(new DeviceModel(nameDevice, id));
-
                 dialog.cancel();
 
             }

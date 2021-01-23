@@ -5,15 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.smarthome.Model.AccountModel;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.FirebaseUtils;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.greenrobot.eventbus.EventBus;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
@@ -64,7 +68,8 @@ public class LoginActivity extends AppCompatActivity {
                 break;
             case R.id.cirLoginButton:
                 utils.signIn(this, mAuth, editTextEmail.getText().toString(), editTextPassword.getText().toString());
-                startActivity(new Intent(this,MainActivity.class ));
+                startActivity(new Intent(this, MainActivity.class));
+                EventBus.getDefault().postSticky(new AccountModel(editTextEmail.getText().toString(), editTextPassword.getText().toString()));
                 break;
             case R.id.new_user:
                 startActivity(new Intent(this, RegisterActivity.class));

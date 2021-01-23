@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -48,6 +49,9 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
 import jp.wasabeef.recyclerview.animators.ScaleInAnimator;
+import jp.wasabeef.recyclerview.animators.ScaleInLeftAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class HomeFragment extends Fragment implements ItemClickListener {
     Unbinder unbinder;
@@ -103,6 +107,8 @@ public class HomeFragment extends Fragment implements ItemClickListener {
         });
 
         rvMusicTypes.setAdapter(homeAdapter);
+        rvMusicTypes.setItemAnimator(new SlideInLeftAnimator());
+//        rvMusicTypes.setItemAnimator(new SlideInLeftAnimator(new OvershootInterpolator(1f)));
         rvMusicTypes.setLayoutManager(gridLayoutManager);
         rvMusicTypes.setItemAnimator(new ScaleInAnimator());
 
@@ -178,7 +184,7 @@ public class HomeFragment extends Fragment implements ItemClickListener {
         homeTypeModelList.addAll(list);
         Log.d(TAG, "onReceivedTopSong1: "+homeTypeModelList.size());
 //        homeTypeModelList.add(new HomeTypeModel(R.raw.bathroom, "a"));
-        homeAdapter.notifyDataSetChanged();
+        homeAdapter.notifyItemChanged(list.size()-1);
     }
 
 }
