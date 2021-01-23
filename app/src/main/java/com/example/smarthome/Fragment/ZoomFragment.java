@@ -166,13 +166,7 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
                     list.add(new HomeTypeModel(R.raw.quat, data.getKey()));
 
 
-                    for (DataSnapshot model : data.getChildren()) {
 
-                        FirebaseModel firebaseModel = model.getValue(FirebaseModel.class);
-
-
-
-                    }
                 }
                 Log.d(TAG, "add lan so :" + list.size());
                 typeModelListHome.clear();

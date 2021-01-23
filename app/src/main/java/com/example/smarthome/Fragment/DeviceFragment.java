@@ -118,11 +118,11 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
     public void onClick(View view, int position, boolean isLongClick) {
         Log.d(TAG, "onClick: " + FutureList.get(position).nameRoom);
         Log.d(TAG, "code future:" + codeDeviceList.get(position).toString());
-        String a="{\"cmd\":\""+id +"\", \"code\":\""+codeDeviceList.get(position).toString()+"\"}";
+        String a = "{\"cmd\":\"" + id + "\", \"code\":\"" + codeDeviceList.get(position).toString() + "\"}";
         String payload = "{\"code\":\"" + codeDeviceList.get(position).toString() + "\"}";
         // dang ki MQTT broker
 
-        MQTT.callback(getContext(), payload);
+        MQTT.callback(getContext(), a);
     }
 
     @OnClick({R.id.add})
@@ -148,6 +148,8 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
             public void onClick(View v) {
                 //subscribe mot topic de nhan code ve
                 //lay dl tu broker ve up len firebase
+                Log.d(TAG, "onClick: " + id);
+                Log.d(TAG, "onClick: " + cmd);
                 if (cmd.equals(id)) {
                     firebaseModel = new FirebaseModel(code, cmd);
 
@@ -156,9 +158,11 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
 
                     pushDataFirebase(firebaseModel, id, nameDevice, txt.getText().toString());
                     Log.d(TAG, "push len firebae " + firebaseModel.cmd + firebaseModel.code);
+                } else {
+                    Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
                 }
 
-                Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
+
                 dialog.cancel();
 
             }
@@ -169,10 +173,7 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
     public void pushDataFirebase(FirebaseModel firebaseModel, String id, String name, String feature) {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child(id).child(name);
-        databaseReference.child(feature).setValue(new FirebaseModel(
-                firebaseModel.code,
-                firebaseModel.cmd
-        ));
+        databaseReference.child(feature).setValue(firebaseModel.code);
     }
 
     @Subscribe(sticky = true)
@@ -203,9 +204,9 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
                 for (DataSnapshot data : snapshot.getChildren()) {
                     if (data.getKey().equals(nameDevice)) {
                         for (DataSnapshot model : data.getChildren()) {
-                            FirebaseModel firebaseModel = model.getValue(FirebaseModel.class);
-                            Log.d(TAG, "model:" + firebaseModel.cmd);
-                            listCode.add(firebaseModel.code);
+                            String dataCode = model.getValue().toString();
+                            Log.d(TAG, "get code :" + dataCode);
+                            listCode.add(dataCode);
                             list.add(new HomeTypeModel(R.raw.quat, model.getKey()));
                         }
                         break;
