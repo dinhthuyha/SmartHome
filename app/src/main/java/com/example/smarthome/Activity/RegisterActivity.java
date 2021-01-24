@@ -12,10 +12,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smarthome.Model.AccountModel;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.FirebaseUtils;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.greenrobot.eventbus.EventBus;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
@@ -72,6 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.cirRegisterButton:
                 utils.signUp(this,mAuth,editTextEmail.getText().toString(),editTextPassword.getText().toString());
+                EventBus.getDefault().postSticky(new AccountModel(editTextEmail.getText().toString(), editTextPassword.getText().toString()));
                 startActivity(new Intent(this,MainActivity.class ));
                 break;
             case R.id.already_account:

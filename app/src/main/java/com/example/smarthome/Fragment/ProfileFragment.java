@@ -120,7 +120,7 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         unbinder = ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
-       getDataAccount();
+        getDataAccount();
         initPermission();
         return view;
     }
@@ -157,7 +157,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    @OnClick({ R.id.icon_edit, R.id.imgage_profile, R.id.edit_text, R.id.log_out, R.id.reset_pass})
+    @OnClick({R.id.icon_edit, R.id.imgage_profile, R.id.edit_text, R.id.log_out, R.id.reset_pass})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -207,6 +207,7 @@ public class ProfileFragment extends Fragment {
 
     @Subscribe(sticky = true)
     public void onReceivedData(AccountModel accountModel) {
+        email.setText(accountModel.getMail().toString());
         Log.d(TAG, "onReceivedAccount: " + accountModel.getMail());
     }
 
@@ -239,7 +240,7 @@ public class ProfileFragment extends Fragment {
         dialog.setContentView(R.layout.edit_profile);
         EditText editEmail = dialog.findViewById(R.id.mail);
         EditText phone = dialog.findViewById(R.id.phone);
-        EditText txtname= dialog.findViewById(R.id.name);
+        EditText txtname = dialog.findViewById(R.id.name);
         dialog.setCancelable(false);
         TransitionButton transitionButton = dialog.findViewById(R.id.transition_button);
         transitionButton.setOnClickListener(new View.OnClickListener() {
@@ -248,7 +249,7 @@ public class ProfileFragment extends Fragment {
                 email.setText(editEmail.getText().toString());
                 SDT.setText(phone.getText().toString());
                 name.setText(txtname.getText().toString());
-                account = new DataAccount(email.getText().toString(), SDT.getText().toString(),name.getText().toString() );
+                account = new DataAccount(email.getText().toString(), SDT.getText().toString(), name.getText().toString());
                 DatabaseFirebase.pushAccountFirebase(account);
                 Log.d(TAG, "email: " + editEmail.getText());
                 Log.d(TAG, "phone: " + phone.getText());
