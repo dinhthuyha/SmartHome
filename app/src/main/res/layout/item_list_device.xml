@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:layout_marginLeft="9dp"
-    android:outlineAmbientShadowColor="@color/black"
     android:layout_marginBottom="10dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:outlineAmbientShadowColor="@color/black">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
@@ -37,13 +37,20 @@
         android:textAllCaps="true"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp" />
+
     <TextView
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="19dp"
-        android:background="@color/goodgrey"/>
+        android:background="@color/goodgrey" />
 
+    <ImageView
+        android:id="@+id/delete"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_sub_24" />
 
 </RelativeLayout>

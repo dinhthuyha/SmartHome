@@ -156,7 +156,7 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
                     Log.d(TAG, "name:" + nameDevice);
                     //ssubcribe
 
-                    pushDataFirebase(firebaseModel, id, nameDevice, txt.getText().toString());
+                    DatabaseFirebase.pushDataFirebaseFuture(firebaseModel, id, nameDevice, txt.getText().toString());
                     Log.d(TAG, "push len firebae " + firebaseModel.cmd + firebaseModel.code);
                 } else {
                     Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
@@ -168,11 +168,12 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
         dialog.show();
     }
 
-    public void pushDataFirebase(FirebaseModel firebaseModel, String id, String name, String feature) {
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference().child(id).child(name);
-        databaseReference.child("a").removeValue();
-        databaseReference.child(feature).setValue(firebaseModel.code);
+    @Subscribe(sticky = true)
+    public void OnReceive(HomeTypeModel homeTypeModel) {
+        Log.d(TAG, "OnReceive1: "+homeTypeModel.nameRoom);
+        Log.d(TAG, "OnReceive device: "+ nameDevice);
+        DatabaseFirebase.deleteFuture(id,nameDevice, homeTypeModel.nameRoom);
+
     }
 
     @Subscribe(sticky = true)

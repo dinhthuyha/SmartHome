@@ -12,8 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smarthome.Fragment.ZoomFragment;
+import com.example.smarthome.Model.DataAccount;
 import com.example.smarthome.Model.HomeTypeModel;
 import com.example.smarthome.R;
+import com.example.smarthome.Utils.DatabaseFirebase;
 import com.example.smarthome.Utils.FragmentUtils;
 import com.squareup.picasso.Picasso;
 
@@ -68,7 +70,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    homeArray.remove(getAdapterPosition());
+                   homeArray.remove(getAdapterPosition());
+                    DatabaseFirebase.deleteRoom();
+                    for (HomeTypeModel model: homeArray){
+                        DatabaseFirebase.PushRoom(model.nameRoom);
+                    }
+
                     notifyDataSetChanged();
                 }
             });

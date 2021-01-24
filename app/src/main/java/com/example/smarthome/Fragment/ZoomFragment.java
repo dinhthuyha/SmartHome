@@ -131,7 +131,7 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
             }
         });
         FragmentUtils.openFragment(getFragmentManager(), R.id.ll_home_fm, new DeviceFragment());
-        Log.d(TAG, "send device :  "+id + typeModelListHome.get(position).nameRoom);
+        Log.d(TAG, "send device :  " + id + typeModelListHome.get(position).nameRoom);
         EventBus.getDefault().postSticky(new OnClickItem(typeModelListHome.get(position), position, id));
 
     }
@@ -151,6 +151,13 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
 
     }
 
+    @Subscribe(sticky = true)
+    public void OnReceive(HomeTypeModel homeTypeModel) {
+        Log.d(TAG, "OnReceive1: "+homeTypeModel.nameRoom);
+        DatabaseFirebase.deleteDevice(id,homeTypeModel.nameRoom);
+
+    }
+
     public void getRoom(String id) {
         List<HomeTypeModel> list = new ArrayList<>();
         List<ReadDeviceModel> futureAndCodeModelList = new ArrayList<>();
@@ -164,7 +171,6 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
 
 
                     list.add(new HomeTypeModel(R.raw.quat, data.getKey()));
-
 
 
                 }

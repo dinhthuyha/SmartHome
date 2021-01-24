@@ -13,6 +13,8 @@ import com.example.smarthome.Model.HomeTypeModel;
 import com.example.smarthome.R;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,12 +56,22 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         @BindView(R.id.tv_home)
         TextView tvZoom;
         private ItemClickListener itemClickListener;
+        ImageView delete;
 
         public DeviceViewHolder(@NonNull View itemView, ItemClickListener itemClickListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             this.itemClickListener=itemClickListener;
             itemView.setOnClickListener(this);
+            delete = itemView.findViewById(R.id.delete);
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    homeArray.remove(getAdapterPosition());
+                    EventBus.getDefault().postSticky(new HomeTypeModel(homeArray.get(getAdapterPosition()).image, homeArray.get(getAdapterPosition()).nameRoom));
+                    notifyDataSetChanged();
+                }
+            });
         }
         @Override
         public void onClick(View view) {

@@ -24,6 +24,7 @@ public class DatabaseFirebase {
     public static int a = 0;
     public static FirebaseDatabase firebaseDatabase;
     private static final String TAG = "DatabaseFirebase";
+    public static DatabaseReference re;
 
     public static void pushDataFirebase(FirebaseModel firebaseModel, String id, String name, String feature) {
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -80,7 +81,6 @@ public class DatabaseFirebase {
     }
 
 
-
     public static void PushRoom(String nameRoom) {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child("Room House");
@@ -90,6 +90,32 @@ public class DatabaseFirebase {
     public static void pushAccountFirebase(DataAccount dataAccount) {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child("account");
-        databaseReference.push().setValue(new DataAccount(dataAccount.getEmail(), dataAccount.getPhone(),dataAccount.getName()));
+        databaseReference.push().setValue(new DataAccount(dataAccount.getEmail(), dataAccount.getPhone(), dataAccount.getName()));
+    }
+
+    public static void deleteRoom() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference reference = firebaseDatabase.getReference("Room House");
+        reference.removeValue();
+
+    }
+
+    public static void pushDataFirebaseFuture(FirebaseModel firebaseModel, String id, String name, String feature) {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference().child(id).child(name);
+        databaseReference.child("a").removeValue();
+        databaseReference.child(feature).setValue(firebaseModel.code);
+    }
+
+    public static void deleteDevice(String id, String name){
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference();
+        databaseReference.child(id).child(name).removeValue();
+    }
+    public static void deleteFuture(String id, String name, String future){
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference().child(id).child(name);
+
+        databaseReference.child(future).removeValue();
     }
 }

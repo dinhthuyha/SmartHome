@@ -1,5 +1,6 @@
 package com.example.smarthome.Adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smarthome.Model.HomeTypeModel;
 import com.example.smarthome.R;
+import com.example.smarthome.Utils.OnClickItem;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +26,7 @@ import butterknife.ButterKnife;
 public class ZoomAdapter extends RecyclerView.Adapter<ZoomAdapter.ZoomViewHolder> {
     List<HomeTypeModel> homeArray = new ArrayList<>();
     private ItemClickListener itemClickListener;
-
+    private static final String TAG = "ZoomAdapter";
     public ZoomAdapter(List<HomeTypeModel> homeArray, ItemClickListener itemClickListener) {
         this.homeArray = homeArray;
         this.itemClickListener = itemClickListener;
@@ -52,12 +56,23 @@ public class ZoomAdapter extends RecyclerView.Adapter<ZoomAdapter.ZoomViewHolder
         @BindView(R.id.tv_home)
         TextView tvZoom;
         private ItemClickListener itemClickListener;
+        ImageView delete;
 
         public ZoomViewHolder(@NonNull View itemView, ItemClickListener itemClickListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             this.itemClickListener=itemClickListener;
             itemView.setOnClickListener(this);
+            delete = itemView.findViewById(R.id.delete);
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "onClick delete: ");
+//                    homeArray.remove(getAdapterPosition());
+                    EventBus.getDefault().postSticky(new HomeTypeModel(homeArray.get(getAdapterPosition()).image, homeArray.get(getAdapterPosition()).nameRoom));
+                    notifyDataSetChanged();
+                }
+            });
         }
         @Override
         public void onClick(View view) {
