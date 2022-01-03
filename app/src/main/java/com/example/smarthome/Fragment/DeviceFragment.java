@@ -1,7 +1,6 @@
 package com.example.smarthome.Fragment;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,13 +18,10 @@ import android.widget.Toast;
 
 import com.example.smarthome.Adapter.DeviceAdapter;
 import com.example.smarthome.Adapter.ItemClickListener;
-import com.example.smarthome.Model.DeviceModel;
 import com.example.smarthome.Model.FirebaseModel;
 import com.example.smarthome.Model.HomeTypeModel;
-import com.example.smarthome.Model.ReadDeviceModel;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.DatabaseFirebase;
-import com.example.smarthome.Utils.FragmentUtils;
 import com.example.smarthome.Utils.MQTT;
 import com.example.smarthome.Utils.OnClickItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -34,21 +30,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,10 +163,10 @@ public class DeviceFragment extends Fragment implements ItemClickListener {
 
     @Subscribe(sticky = true)
     public void onReceivedTopSong(OnClickItem onClickItem) {
-        Log.d(TAG, "id:" + onClickItem.id);
+        Log.d(TAG, "id:" + onClickItem.idDevice);
         Log.d(TAG, "name Device:" + onClickItem.homeTypeModel.nameRoom);
-        getRoom(onClickItem.id, onClickItem.homeTypeModel.nameRoom);
-        id = onClickItem.id;
+        getRoom(onClickItem.idDevice, onClickItem.homeTypeModel.nameRoom);
+        id = onClickItem.idDevice;
         nameDevice = onClickItem.homeTypeModel.nameRoom;
     }
 

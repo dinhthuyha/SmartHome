@@ -38,38 +38,38 @@ public class ResetActivity extends AppCompatActivity {
             public void onClick(View v) {
                 transitionButton.startAnimation();
                 sendEmailResetPass(email.getText().toString());
-                final Handler handler= new Handler();
+                final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        boolean isSuccess= true;
+                        boolean isSuccess = true;
 
-                        if(isSuccess){
+                        if (isSuccess) {
                             transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.EXPAND, new TransitionButton.OnAnimationStopEndListener() {
                                 @Override
                                 public void onAnimationStopEnd() {
-                                    Intent intent= new Intent(getBaseContext(), MainActivity.class);
+                                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                                     startActivity(intent);
                                 }
                             });
-                        }else{
+                        } else {
                             transitionButton.stopAnimation(TransitionButton.StopAnimationStyle.SHAKE, null);
                         }
                     }
-                },2000);
+                }, 2000);
             }
         });
 
     }
 
-    public void sendEmailResetPass(String email){
-        FirebaseAuth auth= FirebaseAuth.getInstance();
+    public void sendEmailResetPass(String email) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             Toast.makeText(ResetActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
                         }
                     }

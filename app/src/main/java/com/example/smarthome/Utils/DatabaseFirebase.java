@@ -4,9 +4,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.smarthome.Model.DataAccount;
 import com.example.smarthome.Model.FirebaseModel;
 import com.example.smarthome.Model.HomeTypeModel;
-import com.example.smarthome.Model.DataAccount;
 import com.example.smarthome.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -54,19 +54,25 @@ public class DatabaseFirebase {
         return list;
     }
 
-
-    public static void getRoom(String name) {
+    public static void pushAccount(String uid,DataAccount data){
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference reference = firebaseDatabase.getReference("user");
+        reference.child(uid).setValue(data);
+    }
+    public static void getRoom(String uid) {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference reference = firebaseDatabase.getReference(name);
+        DatabaseReference reference = firebaseDatabase.getReference("user").child(uid).child("List Room");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<HomeTypeModel> list = new ArrayList<>();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Log.d(TAG, "onDataChange: " + data.getKey());
-                    String name = data.getValue(String.class);
-                    list.add(new HomeTypeModel(R.raw.bathroom, name));
+                    String name = data.getKey();
+                    Log.d(TAG, "onClick: " + data.child("idDevice").getValue());
+                    // String id = data.child("device").getValue().;
+                    list.add(new HomeTypeModel(R.raw.bathroom, name,data.child("idDevice").getValue().toString()));
                     Log.d(TAG, "onDataChange: " + list.size());
 
                 }
@@ -81,21 +87,16 @@ public class DatabaseFirebase {
     }
 
 
-    public static void PushRoom(String nameRoom) {
+    public static void PushRoom(String uid,String nameRoom, String idDevice) {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference().child("Room House");
-        databaseReference.push().setValue(nameRoom);
+        DatabaseReference databaseReference = firebaseDatabase.getReference("user");
+        HomeTypeModel temp = new HomeTypeModel(nameRoom,idDevice);
+        databaseReference.child(uid).child("List Room").child(nameRoom).setValue(temp);
     }
 
-    public static void pushAccountFirebase(DataAccount dataAccount) {
+    public static void deleteRoom(String uid) {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference().child("account");
-        databaseReference.push().setValue(new DataAccount(dataAccount.getEmail(), dataAccount.getPhone(), dataAccount.getName()));
-    }
-
-    public static void deleteRoom() {
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference reference = firebaseDatabase.getReference("Room House");
+        DatabaseReference reference = firebaseDatabase.getReference("user").child(uid).child("List Room");
         reference.removeValue();
 
     }
@@ -103,7 +104,7 @@ public class DatabaseFirebase {
     public static void pushDataFirebaseFuture(FirebaseModel firebaseModel, String id, String name, String feature) {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child(id).child(name);
-        databaseReference.child("a").removeValue();
+        databaseReference.child("Please add new feauture").removeValue();
         databaseReference.child(feature).setValue(firebaseModel.code);
     }
 

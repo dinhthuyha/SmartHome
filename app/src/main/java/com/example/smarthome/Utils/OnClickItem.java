@@ -5,12 +5,12 @@ import com.example.smarthome.Model.HomeTypeModel;
 public class OnClickItem {
     public HomeTypeModel homeTypeModel;
     public int pos;
-    public String id;
+    public String idDevice;
 
-    public OnClickItem(HomeTypeModel homeTypeModel, int pos, String id) {
+    public OnClickItem(HomeTypeModel homeTypeModel, int pos, String idDevice) {
         this.homeTypeModel = homeTypeModel;
         this.pos = pos;
-        this.id=id;
+        this.idDevice=idDevice;
     }
 
     public HomeTypeModel getHomeTypeModel() {
@@ -30,11 +30,11 @@ public class OnClickItem {
     }
 
     public String getId() {
-        return id;
+        return idDevice;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String idDevice) {
+        this.idDevice = idDevice;
     }
 
     public OnClickItem(HomeTypeModel homeTypeModel) {

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smarthome.Model.HomeTypeModel;
 import com.example.smarthome.R;
-import com.example.smarthome.Utils.OnClickItem;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,14 +33,14 @@ public class ZoomAdapter extends RecyclerView.Adapter<ZoomAdapter.ZoomViewHolder
 
     @NonNull
     @Override
-    public ZoomAdapter.ZoomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ZoomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View itemView = layoutInflater.inflate(R.layout.item_list_device, parent, false);
-        return new ZoomAdapter.ZoomViewHolder(itemView,itemClickListener);
+        return new ZoomViewHolder(itemView,itemClickListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ZoomAdapter.ZoomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ZoomViewHolder holder, int position) {
         holder.setData(homeArray.get(position));
     }
 

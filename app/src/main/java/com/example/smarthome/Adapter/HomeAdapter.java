@@ -1,6 +1,5 @@
 package com.example.smarthome.Adapter;
 
-import android.app.Notification;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.smarthome.Fragment.ZoomFragment;
-import com.example.smarthome.Model.DataAccount;
 import com.example.smarthome.Model.HomeTypeModel;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.DatabaseFirebase;
-import com.example.smarthome.Utils.FragmentUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
     List<HomeTypeModel> homeArray = new ArrayList<>();
     private ItemClickListener itemClickListener;
     Context context;
-
+    FirebaseUser mUser;
     public HomeAdapter(List<HomeTypeModel> homeArray, ItemClickListener itemClickListener, Context context) {
         this.homeArray = homeArray;
         this.itemClickListener = itemClickListener;
@@ -62,6 +60,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
         private ItemClickListener itemClickListener;
         ImageView delete;
 
+
         public HomeViewHolder(@NonNull View itemView, ItemClickListener itemClickListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -70,10 +69,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   homeArray.remove(getAdapterPosition());
-                    DatabaseFirebase.deleteRoom();
+                    homeArray.remove(getAdapterPosition());
+                    DatabaseFirebase.deleteRoom(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     for (HomeTypeModel model: homeArray){
-                        DatabaseFirebase.PushRoom(model.nameRoom);
+                        DatabaseFirebase.PushRoom(FirebaseAuth.getInstance().getCurrentUser().getUid(),model.nameRoom,model.idDevice);
                     }
 
                     notifyDataSetChanged();

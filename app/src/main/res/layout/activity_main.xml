@@ -5,7 +5,7 @@
     android:id="@+id/rl_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="#474444"
     android:orientation="vertical">
 
 
@@ -22,18 +22,21 @@
 
         <com.google.android.material.tabs.TabLayout
 
-            android:background="#6d1bbf"
             android:id="@+id/tablayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:background="#555555">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:icon="@drawable/icon_home" />
 
-
+<!--            <com.google.android.material.tabs.TabItem-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:icon="@drawable/icon_chart" />-->
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

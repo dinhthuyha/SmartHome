@@ -20,6 +20,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position){
             case 0:
                 return new HomeFragment();
+//            case 1:
+//                return new ChartFragment();
             case 1:
                 return new ProfileFragment();
         }
@@ -28,6 +30,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 }

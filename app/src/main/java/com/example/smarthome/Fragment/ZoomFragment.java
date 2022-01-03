@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,12 +21,10 @@ import com.example.smarthome.Adapter.ItemClickListener;
 import com.example.smarthome.Adapter.ZoomAdapter;
 import com.example.smarthome.Model.DeviceModel;
 import com.example.smarthome.Model.FirebaseModel;
-import com.example.smarthome.Model.FutureAndCodeModel;
 import com.example.smarthome.Model.HomeTypeModel;
-import com.example.smarthome.Model.Model;
-import com.example.smarthome.Model.ReadDeviceModel;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.DatabaseFirebase;
+import com.example.smarthome.Utils.FragmentUtils;
 import com.example.smarthome.Utils.OnClickItem;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -50,8 +47,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
-
-import com.example.smarthome.Utils.FragmentUtils;
 
 public class ZoomFragment extends Fragment implements ItemClickListener {
     Unbinder unbinder;
@@ -144,7 +139,7 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
         HomeTypeModel model = homeTypeModel.homeTypeModel;
         Picasso.get().load(model.image).into(ivType);
         tvType.setText(model.nameRoom);
-        id = homeTypeModel.id;
+        id = homeTypeModel.idDevice;
 //        Log.d(TAG, "onReceivedTopSong: " + model.nameRoom);
 //        Log.d(TAG, "onReceivedID" + homeTypeModel.id);
         getRoom(id);
@@ -155,12 +150,11 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
     public void OnReceive(HomeTypeModel homeTypeModel) {
         Log.d(TAG, "OnReceive1: "+homeTypeModel.nameRoom);
         DatabaseFirebase.deleteDevice(id,homeTypeModel.nameRoom);
-
     }
 
     public void getRoom(String id) {
         List<HomeTypeModel> list = new ArrayList<>();
-        List<ReadDeviceModel> futureAndCodeModelList = new ArrayList<>();
+        // List<ReadDeviceModel> futureAndCodeModelList = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference reference = firebaseDatabase.getReference(id);
         reference.addValueEventListener(new ValueEventListener() {
@@ -212,8 +206,8 @@ public class ZoomFragment extends Fragment implements ItemClickListener {
         oke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseModel = new FirebaseModel("0123456", "p");
-                DatabaseFirebase.pushDataFirebase(firebaseModel, id, txt.getText().toString(), "a");
+                firebaseModel = new FirebaseModel("none", "none");
+                DatabaseFirebase.pushDataFirebase(firebaseModel, id, txt.getText().toString(), "Please add new feauture");
 
                 nameDevice = txt.getText().toString();
                 EventBus.getDefault().postSticky(new DeviceModel(nameDevice, id));

@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -25,10 +24,8 @@ import android.widget.Toast;
 
 import com.example.smarthome.Activity.LoginActivity;
 import com.example.smarthome.Activity.ResetActivity;
-import com.example.smarthome.Model.AccountModel;
 import com.example.smarthome.Model.DataAccount;
 import com.example.smarthome.R;
-import com.example.smarthome.Utils.DatabaseFirebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,18 +34,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.royrodriguez.transitionbutton.TransitionButton;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.w3c.dom.Text;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-
 
 public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
@@ -62,8 +51,7 @@ public class ProfileFragment extends Fragment {
     DataAccount account;
 
 
-    @BindView(R.id.icon_edit)
-    ImageView iconEdit;
+
 
     @BindView(R.id.imgage_profile)
     ImageView imageProfile;
@@ -86,8 +74,7 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.reset_pass)
     Button resetPass;
 
-    @BindView(R.id.imgage_background)
-    ImageView imageBackground;
+
 
     public ProfileFragment() {
     }
@@ -119,7 +106,7 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         unbinder = ButterKnife.bind(this, view);
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
         getDataAccount();
         initPermission();
         return view;
@@ -157,17 +144,9 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    @OnClick({R.id.icon_edit, R.id.imgage_profile, R.id.edit_text, R.id.log_out, R.id.reset_pass})
+    @OnClick({R.id.imgage_profile, R.id.edit_text, R.id.log_out, R.id.reset_pass})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-
-            case R.id.icon_edit:
-                Log.d(TAG, "onViewClicked: ");
-                changeImageBackground();
-                break;
-            case R.id.imgage_profile:
-                changeImageBackground();
-                break;
             case R.id.edit_text:
                 Log.d(TAG, "onViewClicked: edit contact");
                 openDialog();
@@ -184,48 +163,28 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    public void changeImageBackground() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, SELECT_IMAGE);
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SELECT_IMAGE && data != null) {
-            try {
-
-                InputStream i = getContext().getContentResolver().openInputStream(data.getData());
-                imageBackground.setImageURI(data.getData());
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Subscribe(sticky = true)
-    public void onReceivedData(AccountModel accountModel) {
-        email.setText(accountModel.getMail().toString());
-        Log.d(TAG, "onReceivedAccount: " + accountModel.getMail());
-    }
-
+    /*  @Subscribe(sticky = true)
+       public void onReceivedData(DataAccount data) {
+           DatabaseFirebase.pushAccount(FirebaseAuth.getInstance().getCurrentUser().getUid(),data);
+       }
+   */
     public void getDataAccount() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("account");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Log.d(TAG, "onDataChange: " + snapshot.getValue());
+                name.setText(snapshot.child("name").getValue().toString());
+                SDT.setText(snapshot.child("phone").getValue().toString());
+                email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
-
-//                Log.d(TAG, "onDataChange: " + dataAccount.email);
-                for (DataSnapshot data : snapshot.getChildren()) {
+         /*       for (DataSnapshot data : snapshot.getChildren()) {
                     DataAccount account = data.getValue(DataAccount.class);
-                    email.setText(account.getEmail());
+              //      email.setText(account.getEmail());
                     SDT.setText(account.getPhone());
-                }
+                }*/
             }
 
             @Override
@@ -249,8 +208,8 @@ public class ProfileFragment extends Fragment {
                 email.setText(editEmail.getText().toString());
                 SDT.setText(phone.getText().toString());
                 name.setText(txtname.getText().toString());
-                account = new DataAccount(email.getText().toString(), SDT.getText().toString(), name.getText().toString());
-                DatabaseFirebase.pushAccountFirebase(account);
+                //  account = new DataAccount(email.getText().toString(), SDT.getText().toString(), name.getText().toString());
+
                 Log.d(TAG, "email: " + editEmail.getText());
                 Log.d(TAG, "phone: " + phone.getText());
                 transitionButton.startAnimation();

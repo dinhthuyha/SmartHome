@@ -3,19 +3,25 @@ package com.example.smarthome.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.smarthome.Model.AccountModel;
+import com.example.smarthome.Model.DataAccount;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.FirebaseUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.greenrobot.eventbus.EventBus;
@@ -57,8 +63,12 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
         changeStatusBarColor();
+        //EventBus.getDefault().register(this);
         mAuth = FirebaseAuth.getInstance();
         utils = new FirebaseUtils();
+        /*if(mAuth.getCurrentUser()!= null){
+            startActivity(new Intent(RegisterActivity.this, MainActivity.class ));
+        }*/
     }
 
     private void changeStatusBarColor() {
@@ -74,9 +84,38 @@ public class RegisterActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.cirRegisterButton:
-                utils.signUp(this,mAuth,editTextEmail.getText().toString(),editTextPassword.getText().toString());
-                EventBus.getDefault().postSticky(new AccountModel(editTextEmail.getText().toString(), editTextPassword.getText().toString()));
-                startActivity(new Intent(this,MainActivity.class ));
+                String email = editTextEmail.getText().toString().trim();
+                String pass = editTextPassword.getText().toString().trim();
+                if(TextUtils.isEmpty(email))
+                {
+                    editTextEmail.setError("Email is Requiered");
+                    return;
+                }
+                if(TextUtils.isEmpty(pass))
+                {
+                    editTextPassword.setError("Password is Requiered");
+                    return;
+                }
+                if(pass.length() < 6)
+                {
+                    editTextPassword.setError("Password is Short");
+                    return;
+                }
+                mAuth.createUserWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(RegisterActivity.this,"user created",Toast.LENGTH_SHORT).show();
+                            EventBus.getDefault().postSticky(new DataAccount(editTextName.getText().toString(),editTextMobile.getText().toString()));
+                            startActivity(new Intent(RegisterActivity.this, MainActivity.class ));
+                        }
+                        else {
+                            Toast.makeText(RegisterActivity.this,"Error !",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                //  utils.signUp(this,mAuth,editTextEmail.getText().toString(),editTextPassword.getText().toString());
                 break;
             case R.id.already_account:
                 startActivity(new Intent(this, LoginActivity.class));

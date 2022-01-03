@@ -32,10 +32,10 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
 
     @NonNull
     @Override
-    public DeviceAdapter.DeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View itemView = layoutInflater.inflate(R.layout.item_list_device, parent, false);
-        return new DeviceAdapter.DeviceViewHolder(itemView,itemClickListener);
+        return new DeviceViewHolder(itemView,itemClickListener);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    homeArray.remove(getAdapterPosition());
+//                  homeArray.remove(getAdapterPosition());
                     EventBus.getDefault().postSticky(new HomeTypeModel(homeArray.get(getAdapterPosition()).image, homeArray.get(getAdapterPosition()).nameRoom));
                     notifyDataSetChanged();
                 }

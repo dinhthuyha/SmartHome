@@ -1,13 +1,23 @@
 package com.example.smarthome.Activity;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.smarthome.Adapter.ViewPagerAdapter;
+import com.example.smarthome.Model.DataAccount;
 import com.example.smarthome.R;
+import com.example.smarthome.Utils.DatabaseFirebase;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,15 +28,17 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
+    FirebaseDatabase firebaseDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
         tabLayout.getTabAt(0).getIcon().setAlpha(255);
         tabLayout.getTabAt(1).getIcon().setAlpha(100);
-
+        //tabLayout.getTabAt(2).getIcon().setAlpha(100);
+        EventBus.getDefault().register(this);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -51,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         //lay con fragment manager tu activity ra
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
@@ -58,5 +72,12 @@ public class MainActivity extends AppCompatActivity {
         //ham lang nghe su thay doi cua TabLayout
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
+    }
+
+    @Subscribe(sticky = true)
+    public void onReceivedData(DataAccount data) {
+        Log.d(TAG, "push" );
+        DatabaseFirebase.pushAccount(FirebaseAuth.getInstance().getCurrentUser().getUid(),data);
+        Log.d(TAG, "push sus" );
     }
 }

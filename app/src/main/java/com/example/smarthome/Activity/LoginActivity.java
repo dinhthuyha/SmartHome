@@ -1,20 +1,24 @@
 package com.example.smarthome.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.smarthome.Model.AccountModel;
 import com.example.smarthome.R;
 import com.example.smarthome.Utils.FirebaseUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.greenrobot.eventbus.EventBus;
@@ -67,9 +71,37 @@ public class LoginActivity extends AppCompatActivity {
                 utils.forGotPassword(this, mAuth, editTextEmail.getText().toString());
                 break;
             case R.id.cirLoginButton:
-                utils.signIn(this, mAuth, editTextEmail.getText().toString(), editTextPassword.getText().toString());
-                startActivity(new Intent(this, MainActivity.class));
-                EventBus.getDefault().postSticky(new AccountModel(editTextEmail.getText().toString(), editTextPassword.getText().toString()));
+                String email = editTextEmail.getText().toString().trim();
+                String pass = editTextPassword.getText().toString().trim();
+                if(TextUtils.isEmpty(email))
+                {
+                    editTextEmail.setError("Email is Requiered");
+                    return;
+                }
+                if(TextUtils.isEmpty(pass))
+                {
+                    editTextPassword.setError("Password is Requiered");
+                    return;
+                }
+                if(pass.length() < 6)
+                {
+                    editTextPassword.setError("Password is Short");
+                    return;
+                }
+                mAuth.signInWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(LoginActivity.this,"Login Successful",Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class ));
+                        }
+                        else {
+                            Toast.makeText(LoginActivity.this,"Login Failed !",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                //utils.signIn(this, mAuth, editTextEmail.getText().toString(), editTextPassword.getText().toString());
+
                 break;
             case R.id.new_user:
                 startActivity(new Intent(this, RegisterActivity.class));
